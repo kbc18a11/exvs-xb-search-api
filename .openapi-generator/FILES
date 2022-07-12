@@ -1,0 +1,11 @@
+.docs/api/openapi.yaml
+.openapi-generator-ignore
+Dockerfile
+README.md
+go.mod
+handlers/api_airframe.go
+handlers/container.go
+main.go
+models/hello-world.go
+models/model_get_airframes_response.go
+models/model_get_airframes_response_airframes_inner.go
