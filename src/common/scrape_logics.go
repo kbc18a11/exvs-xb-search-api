@@ -1,15 +1,35 @@
 package common
 
 import (
+	"errors"
 	"log"
 	"net/http"
+	"regexp"
+	"strconv"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
+// アットウィキの機体情報
+type AtWikiAirframeInfo struct {
+	TitleOfWork      string
+	Pilot            string
+	AirframeCost     int
+	AwakeningName    string
+	Name             string
+	Hp               int
+	ThumbnailUrl     string
+	IsTransformation bool
+	IsDeformation    bool
+}
+
 type ScrapeLogics interface {
 	// 機体情報URL一覧取得
 	GetAirframeUrls() []string
+
+	// URLから機体情報の取得
+	GetAirframeInfo(airframeUrl string) (*AtWikiAirframeInfo, error)
 }
 
 type ScrapeLogicsImp struct {
@@ -54,4 +74,76 @@ func (scrapeLogicsImp *ScrapeLogicsImp) GetAirframeUrls() []string {
 	})
 
 	return airframeUrls
+}
+
+/*
+URLから機体情報の取得
+*/
+func (scrapeLogicsImp *ScrapeLogicsImp) GetAirframeInfo(airframeUrl string) (*AtWikiAirframeInfo, error) {
+	res, err := http.Get(airframeUrl)
+
+	if err != nil {
+		// リクエスト先が存在しない場合
+		log.Fatal(err)
+	}
+
+	defer res.Body.Close()
+	if res.StatusCode != 200 {
+		// 正常にアクセスできなかった場合
+		log.Fatalf("status code error: %d %s", res.StatusCode, res.Status)
+	}
+
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		// htmlドキュメントが取得できなかった場合
+		log.Fatal(err)
+	}
+
+	atWikiAirframeInfo := &AtWikiAirframeInfo{}
+
+	// 機体名の取得
+	atWikiAirframeInfo.Name = doc.Find("h2").Find("a").Text()
+
+	// 機体サムネイルの取得
+	atWikiAirframeInfo.ThumbnailUrl, _ = doc.Find("source").Attr("data-srcset")
+
+	// 以下の情報を文字列にまとめて取得
+	// 作品タイトル、パイロット名、機体コスト、耐久値、変形の有無、換装の有無、覚醒タイプ
+	airframeInfos := doc.Find(".atwiki_plugin_divclass").Find("table").Find("tbody").Text()
+
+	if len(regexp.MustCompile("\n").Split(airframeInfos, -1)) != 23 {
+		// プレイアブルキャラじゃない場合
+		return nil, errors.New("")
+	}
+
+	// 作品タイトルの取得
+	atWikiAirframeInfo.TitleOfWork = strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[1])
+
+	// パイロット名の取得
+	atWikiAirframeInfo.Pilot = strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[3])
+
+	// 機体コストの取得
+	atWikiAirframeInfo.AirframeCost, _ = strconv.Atoi(strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[5]))
+
+	// 耐久値の取得
+	atWikiAirframeInfo.Hp, _ = strconv.Atoi(strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[7]))
+
+	// 形態以降の有無の判定
+	if strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[9]) != "なし" {
+		atWikiAirframeInfo.IsTransformation = true
+	} else {
+		atWikiAirframeInfo.IsTransformation = false
+	}
+
+	// 変形の有無の判定
+	if strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[17]) == "あり" {
+		atWikiAirframeInfo.IsDeformation = true
+	} else {
+		atWikiAirframeInfo.IsDeformation = false
+	}
+
+	// 覚醒タイプの取得
+	atWikiAirframeInfo.AwakeningName = strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[21])
+
+	return atWikiAirframeInfo, nil
 }

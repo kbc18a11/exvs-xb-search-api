@@ -1,4 +1,4 @@
-package models
+package requestSchema
 
 // GetAirframesResponseAirframesInner - 機体情報
 type GetAirframesResponseAirframesInner struct {

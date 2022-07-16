@@ -1,4 +1,4 @@
-package models
+package requestSchema
 
 // GetAirframesResponse - 機体一覧
 type GetAirframesResponse struct {

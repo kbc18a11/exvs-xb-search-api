@@ -17,7 +17,18 @@ func (arframeService *AirframeService) SaveAtWikiOnAirframes() {
 	// 機体情報のURLを一覧取得
 	airframeUrls := arframeService.ScrapeLogics.GetAirframeUrls()
 
-	for _, v := range airframeUrls {
-		fmt.Printf("%s ", v) // a bc def
+	fmt.Println(len(airframeUrls))
+
+	for i, airframeUrl := range airframeUrls {
+		// time.Sleep(time.Second * 5)
+
+		airframeInfo, err := arframeService.ScrapeLogics.GetAirframeInfo(airframeUrl)
+
+		if err != nil {
+			// プレイアブルキャラじゃない場合
+			continue
+		}
+
+		fmt.Println(i, airframeInfo)
 	}
 }
