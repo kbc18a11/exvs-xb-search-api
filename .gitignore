@@ -1,2 +1,4 @@
 db
 my.cnf
+
+!src/batchs/db
