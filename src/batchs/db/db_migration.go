@@ -22,4 +22,5 @@ func main() {
 		&models.Airframe{},
 	)
 
+	AddMasterData(db)
 }

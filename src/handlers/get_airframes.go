@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/GIT_USER_ID/GIT_REPO_ID/src/requestSchema"
+	requestSchema "github.com/GIT_USER_ID/GIT_REPO_ID/src/request_schema"
 	"github.com/labstack/echo/v4"
 )
 
