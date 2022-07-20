@@ -3,12 +3,13 @@ package main
 import (
 	"log"
 
-	"github.com/GIT_USER_ID/GIT_REPO_ID/src/common"
+	"github.com/GIT_USER_ID/GIT_REPO_ID/src/config"
 	"github.com/GIT_USER_ID/GIT_REPO_ID/src/models"
 )
 
 func main() {
-	db, err := common.DbConnectionInit()
+	dbConfig := &config.DbConfigImp{}
+	db, err := dbConfig.DbConnectionInit()
 
 	if err != nil {
 		log.Fatal(err)

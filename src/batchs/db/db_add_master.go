@@ -69,7 +69,6 @@ func AddMasterData(db *gorm.DB) {
 	db.Create(&models.Pilot{Name: "ノリス・パッカード"})
 	db.Create(&models.Pilot{Name: "ハリー・オード"})
 	db.Create(&models.Pilot{Name: "ジェリド・メサ"})
-	db.Create(&models.Pilot{Name: "フリット・アスノ"})
 	db.Create(&models.Pilot{Name: "叢雲劾"})
 	db.Create(&models.Pilot{Name: "ジョニー・ライデン"})
 	db.Create(&models.Pilot{Name: "コウサカ・ユウマ"})

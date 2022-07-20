@@ -4,6 +4,6 @@ import "gorm.io/gorm"
 
 type Pilot struct {
 	gorm.Model
-	Name      string `gorm:"size:20;not null"`
+	Name      string `gorm:"size:30;unique;not null"`
 	Airframes []Airframe
 }

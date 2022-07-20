@@ -14,7 +14,7 @@ type Airframe struct {
 	AirframeCost     AirframeCost
 	AwakenTypeId     int
 	AwakenType       AwakenType
-	Name             string `gorm:"size:30;not null"`
+	Name             string `gorm:"size:30;unique;not null"`
 	Hp               int    `gorm:"not null"`
 	ThumbnailUrl     string `gorm:"size:2083;not null"`
 	IsTransformation bool   `gorm:"not null"`
