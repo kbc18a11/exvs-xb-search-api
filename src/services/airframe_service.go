@@ -4,10 +4,12 @@ import (
 	"fmt"
 
 	"github.com/GIT_USER_ID/GIT_REPO_ID/src/common"
+	"github.com/GIT_USER_ID/GIT_REPO_ID/src/repositories"
 )
 
 type AirframeService struct {
-	ScrapeLogics common.ScrapeLogics
+	ScrapeLogics          common.ScrapeLogics
+	TitleOfWorkRepository repositories.TitleOfWorkRepository
 }
 
 /*
@@ -17,7 +19,7 @@ func (arframeService *AirframeService) SaveAtWikiOnAirframes() {
 	// 機体情報のURLを一覧取得
 	airframeUrls := arframeService.ScrapeLogics.GetAirframeUrls()
 
-	for i, airframeUrl := range airframeUrls {
+	for _, airframeUrl := range airframeUrls {
 		// time.Sleep(time.Second * 5)
 
 		airframeInfo, err := arframeService.ScrapeLogics.GetAirframeInfo(airframeUrl)
@@ -27,6 +29,8 @@ func (arframeService *AirframeService) SaveAtWikiOnAirframes() {
 			continue
 		}
 
-		fmt.Println(i, airframeInfo)
+		fmt.Println(airframeInfo.Name, airframeInfo.TitleOfWork)
+
+		arframeService.TitleOfWorkRepository.FindByName(airframeInfo.TitleOfWork)
 	}
 }

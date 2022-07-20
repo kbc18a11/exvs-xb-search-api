@@ -119,6 +119,32 @@ func (scrapeLogicsImp *ScrapeLogicsImp) GetAirframeInfo(airframeUrl string) (*At
 	// 作品タイトルの取得
 	atWikiAirframeInfo.TitleOfWork = strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[1])
 
+	// アットwikiとマスタの作品タイトル表記が違う機体をマスタの表記に適用させる
+	switch atWikiAirframeInfo.Name {
+	case "キュベレイMk-II(プル)":
+		fallthrough
+	case "ザクIII改":
+		fallthrough
+	case "キュベレイMk-II(プルツー)":
+		atWikiAirframeInfo.TitleOfWork = "機動戦士ガンダムZZ"
+	case "νガンダム":
+		fallthrough
+	case "ヤクト・ドーガ":
+		atWikiAirframeInfo.TitleOfWork = "機動戦士ガンダム 逆襲のシャア"
+	case "トールギスIII":
+		atWikiAirframeInfo.TitleOfWork = "新機動戦記ガンダムWEndless Waltz"
+	case "アルケーガンダム":
+		atWikiAirframeInfo.TitleOfWork = "機動戦士ガンダム00"
+	case "ブレイヴ指揮官用試験機":
+		atWikiAirframeInfo.TitleOfWork = "劇場版 機動戦士ガンダム00-A wakening of the Trailblazer-"
+	case "G-セルフ":
+		atWikiAirframeInfo.TitleOfWork = "ガンダム Gのレコンギスタ"
+	case "ガンダムEz8":
+		atWikiAirframeInfo.TitleOfWork = "機動戦士ガンダム 第08MS小隊"
+	case "アヴァランチエクシア":
+		atWikiAirframeInfo.TitleOfWork = "機動戦士ガンダム00V"
+	}
+
 	// パイロット名の取得
 	atWikiAirframeInfo.Pilot = strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[3])
 

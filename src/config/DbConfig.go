@@ -7,6 +7,7 @@ import (
 
 type DbConfig interface {
 	DbConnectionInit() (*gorm.DB, error)
+	DbClose(*gorm.DB) error
 }
 
 type DbConfigImp struct {
@@ -23,4 +24,16 @@ func (dbConfigImp *DbConfigImp) DbConnectionInit() (*gorm.DB, error) {
 	}
 
 	return db, nil
+}
+
+func (dbConfigImp *DbConfigImp) DbClose(db *gorm.DB) error {
+	dbSql, err := db.DB()
+
+	if err != nil {
+		return err
+	}
+
+	defer dbSql.Close()
+
+	return nil
 }
