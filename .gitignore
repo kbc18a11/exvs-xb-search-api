@@ -2,3 +2,5 @@ db
 my.cnf
 
 !src/batchs/db
+
+src/images/airframe_thumbnails/*

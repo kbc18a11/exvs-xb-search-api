@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"fmt"
-
 	"github.com/GIT_USER_ID/GIT_REPO_ID/src/config"
 	"github.com/GIT_USER_ID/GIT_REPO_ID/src/models"
 )
@@ -26,15 +24,13 @@ func (repository *TitleOfWorkRepositoryImp) FindByName(name string) (*models.Tit
 	}
 
 	// 作品タイトル名から作品タイトル情報の検索
-	resultTitleOfWork := &models.TitleOfWork{}
-	db.Where("name = ?", name).Find(resultTitleOfWork)
+	titleOfWork := &models.TitleOfWork{}
+	db.Where("name = ?", name).Find(titleOfWork)
 
 	dbCloseerr := repository.DbConfig.DbClose(db)
 	if dbCloseerr != nil {
-		return nil, err
+		return nil, dbCloseerr
 	}
 
-	fmt.Println(resultTitleOfWork.Name)
-
-	return resultTitleOfWork, nil
+	return titleOfWork, nil
 }

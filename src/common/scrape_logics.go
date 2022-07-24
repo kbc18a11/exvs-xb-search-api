@@ -13,15 +13,16 @@ import (
 
 // アットウィキの機体情報
 type AtWikiAirframeInfo struct {
-	TitleOfWork      string
-	Pilot            string
-	AirframeCost     int
-	AwakeningName    string
-	Name             string
-	Hp               int
-	ThumbnailUrl     string
-	IsTransformation bool
-	IsDeformation    bool
+	TitleOfWorkName   string
+	PilotName         string
+	AirframeCostValue int
+	AwakenTypeName    string
+	Name              string
+	Hp                int
+	AirframeInfoUrl   string
+	ThumbnailUrl      string
+	IsTransformation  bool
+	IsDeformation     bool
 }
 
 type ScrapeLogics interface {
@@ -100,6 +101,7 @@ func (scrapeLogicsImp *ScrapeLogicsImp) GetAirframeInfo(airframeUrl string) (*At
 	}
 
 	atWikiAirframeInfo := &AtWikiAirframeInfo{}
+	atWikiAirframeInfo.AirframeInfoUrl = airframeUrl
 
 	// 機体名の取得
 	atWikiAirframeInfo.Name = doc.Find("h2").Find("a").Text()
@@ -117,7 +119,7 @@ func (scrapeLogicsImp *ScrapeLogicsImp) GetAirframeInfo(airframeUrl string) (*At
 	}
 
 	// 作品タイトルの取得
-	atWikiAirframeInfo.TitleOfWork = strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[1])
+	atWikiAirframeInfo.TitleOfWorkName = strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[1])
 
 	// アットwikiとマスタの作品タイトル表記が違う機体をマスタの表記に適用させる
 	switch atWikiAirframeInfo.Name {
@@ -126,30 +128,45 @@ func (scrapeLogicsImp *ScrapeLogicsImp) GetAirframeInfo(airframeUrl string) (*At
 	case "ザクIII改":
 		fallthrough
 	case "キュベレイMk-II(プルツー)":
-		atWikiAirframeInfo.TitleOfWork = "機動戦士ガンダムZZ"
+		atWikiAirframeInfo.TitleOfWorkName = "機動戦士ガンダムZZ"
 	case "νガンダム":
 		fallthrough
 	case "ヤクト・ドーガ":
-		atWikiAirframeInfo.TitleOfWork = "機動戦士ガンダム 逆襲のシャア"
+		atWikiAirframeInfo.TitleOfWorkName = "機動戦士ガンダム 逆襲のシャア"
 	case "トールギスIII":
-		atWikiAirframeInfo.TitleOfWork = "新機動戦記ガンダムWEndless Waltz"
+		atWikiAirframeInfo.TitleOfWorkName = "新機動戦記ガンダムWEndless Waltz"
 	case "アルケーガンダム":
-		atWikiAirframeInfo.TitleOfWork = "機動戦士ガンダム00"
+		atWikiAirframeInfo.TitleOfWorkName = "機動戦士ガンダム00"
 	case "ブレイヴ指揮官用試験機":
-		atWikiAirframeInfo.TitleOfWork = "劇場版 機動戦士ガンダム00-A wakening of the Trailblazer-"
+		atWikiAirframeInfo.TitleOfWorkName = "劇場版 機動戦士ガンダム00-A wakening of the Trailblazer-"
 	case "G-セルフ":
-		atWikiAirframeInfo.TitleOfWork = "ガンダム Gのレコンギスタ"
+		atWikiAirframeInfo.TitleOfWorkName = "ガンダム Gのレコンギスタ"
 	case "ガンダムEz8":
-		atWikiAirframeInfo.TitleOfWork = "機動戦士ガンダム 第08MS小隊"
+		atWikiAirframeInfo.TitleOfWorkName = "機動戦士ガンダム 第08MS小隊"
 	case "アヴァランチエクシア":
-		atWikiAirframeInfo.TitleOfWork = "機動戦士ガンダム00V"
+		atWikiAirframeInfo.TitleOfWorkName = "機動戦士ガンダム00V"
 	}
 
 	// パイロット名の取得
-	atWikiAirframeInfo.Pilot = strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[3])
+	atWikiAirframeInfo.PilotName = strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[3])
+	// アットwikiとマスタのパイロット名の表記が違う機体をマスタの表記に適用させる
+	switch atWikiAirframeInfo.Name {
+	case "アルトロンガンダム":
+		atWikiAirframeInfo.PilotName = "張五飛"
+	case "ザクII改":
+		atWikiAirframeInfo.PilotName = "バーナード・ワイズマン"
+	case "ビギナ・ギナII(木星決戦仕様)":
+		atWikiAirframeInfo.PilotName = "ギリ・ガデューカ・アスピス"
+	case "アストレイブルーフレームD":
+		atWikiAirframeInfo.PilotName = "叢雲劾"
+	case "アストレイブルーフレームセカンドL":
+		atWikiAirframeInfo.PilotName = "叢雲劾"
+	case "ガンダムダブルオーダイバーエース":
+		atWikiAirframeInfo.PilotName = "ミカミ・リク"
+	}
 
 	// 機体コストの取得
-	atWikiAirframeInfo.AirframeCost, _ = strconv.Atoi(strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[5]))
+	atWikiAirframeInfo.AirframeCostValue, _ = strconv.Atoi(strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[5]))
 
 	// 耐久値の取得
 	atWikiAirframeInfo.Hp, _ = strconv.Atoi(strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[7]))
@@ -169,7 +186,7 @@ func (scrapeLogicsImp *ScrapeLogicsImp) GetAirframeInfo(airframeUrl string) (*At
 	}
 
 	// 覚醒タイプの取得
-	atWikiAirframeInfo.AwakeningName = strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[21])
+	atWikiAirframeInfo.AwakenTypeName = strings.TrimSpace(regexp.MustCompile("\n").Split(airframeInfos, -1)[21])
 
 	return atWikiAirframeInfo, nil
 }

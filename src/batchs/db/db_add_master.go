@@ -210,6 +210,10 @@ func AddMasterData(db *gorm.DB) {
 	db.Create(&models.Pilot{Name: "クロト・ブエル"})
 	db.Create(&models.Pilot{Name: "アレルヤ・ハプティズム"})
 	db.Create(&models.Pilot{Name: "カテジナ・ルース"})
+	db.Create(&models.Pilot{Name: "なし"})
+	db.Create(&models.Pilot{Name: "オルガ・サブナック"})
+	db.Create(&models.Pilot{Name: "バーナード・ワイズマン"})
+	db.Create(&models.Pilot{Name: "ギリ・ガデューカ・アスピス"})
 
 	// コストの挿入
 	db.Create(&models.AirframeCost{Cost: 3000})
