@@ -4,3 +4,4 @@ my.cnf
 src/batchs/db
 
 src/images/airframe_thumbnails/*
+!src/images/airframe_thumbnails/.gitkeep
