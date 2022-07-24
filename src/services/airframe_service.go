@@ -2,6 +2,7 @@ package services
 
 import (
 	"log"
+	"time"
 
 	"github.com/GIT_USER_ID/GIT_REPO_ID/src/common"
 	"github.com/GIT_USER_ID/GIT_REPO_ID/src/models"
@@ -19,6 +20,24 @@ type AirframeService struct {
 }
 
 /*
+機体情報の存在確認
+*/
+func (airframeService *AirframeService) IsAirframe(airframeName string) (bool, error) {
+	isAirframe, err := airframeService.AirframeRepository.FindByName(airframeName)
+
+	if err != nil {
+		return false, err
+	}
+
+	if isAirframe != nil {
+		// 機体情報が存在する場合
+		return true, nil
+	} else {
+		return false, nil
+	}
+}
+
+/*
 @wiki記載している全ての機体情報の保存
 */
 func (airframeService *AirframeService) SaveAtWikiOnAirframes() error {
@@ -26,13 +45,22 @@ func (airframeService *AirframeService) SaveAtWikiOnAirframes() error {
 	airframeUrls := airframeService.ScrapeLogics.GetAirframeUrls()
 
 	for _, airframeUrl := range airframeUrls {
-		// time.Sleep(time.Second * 5)
+		// スクレイピング先の負荷軽減のため、5秒停止
+		time.Sleep(time.Second * 5)
 
 		// 機体情報の取得
 		airframeInfo, err := airframeService.ScrapeLogics.GetAirframeInfo(airframeUrl)
 		if err != nil {
 			// プレイアブルキャラじゃない場合
 			continue
+		}
+
+		isAirframe, err := airframeService.IsAirframe(airframeInfo.Name)
+		if isAirframe {
+			// 機体情報が存在する場合
+			continue
+		} else if err != nil {
+			return err
 		}
 
 		airframe := &models.Airframe{}

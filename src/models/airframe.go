@@ -10,7 +10,7 @@ type Airframe struct {
 	PilotId                int
 	AirframeCostId         int
 	AwakenTypeId           int
-	Name                   string `gorm:"size:30;unique;not null"`
+	Name                   string `gorm:"size:60;unique;not null"`
 	Hp                     int    `gorm:"not null"`
 	AirframeInfoUrl        string `gorm:"size:2083;not null"`
 	ThumbnailImageFilePath string `gorm:"size:2083;not null"`

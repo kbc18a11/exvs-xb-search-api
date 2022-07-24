@@ -7,6 +7,7 @@ import (
 
 type AirframeRepository interface {
 	Create(*models.Airframe) error
+	FindByName(name string) (*models.Airframe, error)
 }
 
 type AirframeRepositoryImp struct {
@@ -25,5 +26,38 @@ func (repository AirframeRepositoryImp) Create(airframe *models.Airframe) error 
 
 	db.Create(airframe)
 
+	err = repository.DbConfig.DbClose(db)
+	if err != nil {
+		return err
+	}
+
 	return nil
+}
+
+/*
+機体情報名から機体情報の取得
+*/
+func (repository AirframeRepositoryImp) FindByName(name string) (*models.Airframe, error) {
+	db, DbConnectionInitErr := repository.DbConfig.DbConnectionInit()
+
+	if DbConnectionInitErr != nil {
+		return nil, DbConnectionInitErr
+	}
+
+	airframe := &models.Airframe{}
+
+	// 機体情報名から機体情報の検索
+	db.Where("name LIKE ?", name).Find(airframe)
+
+	dbCloseerr := repository.DbConfig.DbClose(db)
+	if dbCloseerr != nil {
+		return nil, dbCloseerr
+	}
+
+	if airframe.Name == "" {
+		// 機体情報が存在しない場合
+		return nil, nil
+	}
+
+	return airframe, nil
 }

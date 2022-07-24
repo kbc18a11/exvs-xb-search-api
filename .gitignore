@@ -1,6 +1,6 @@
-db
+db/data
 my.cnf
 
-!src/batchs/db
+src/batchs/db
 
 src/images/airframe_thumbnails/*
