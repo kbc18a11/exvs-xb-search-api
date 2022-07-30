@@ -1,4 +1,4 @@
-package requestSchema
+package models
 
 // GetAirframesResponse - 機体一覧
 type GetAirframesResponse struct {
@@ -7,5 +7,5 @@ type GetAirframesResponse struct {
 	Total int32 `json:"total"`
 
 	// 機体一覧
-	Airframes []GetAirframesResponseAirframesInner `json:"airframes"`
+	Airframes []AirframeInfo `json:"airframes"`
 }

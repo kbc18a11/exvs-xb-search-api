@@ -6,6 +6,7 @@ import (
 
 	"github.com/GIT_USER_ID/GIT_REPO_ID/src/common"
 	"github.com/GIT_USER_ID/GIT_REPO_ID/src/models"
+	openApiModels "github.com/GIT_USER_ID/GIT_REPO_ID/src/models/open_api_schema"
 	"github.com/GIT_USER_ID/GIT_REPO_ID/src/repositories"
 )
 
@@ -109,4 +110,32 @@ func (airframeService *AirframeService) SaveAtWikiOnAirframes() error {
 	}
 
 	return nil
+}
+
+/*
+機体情報の一覧取得
+*/
+func (airframeService *AirframeService) GetAirframes(
+	offset int,
+	limit int,
+	airframeName string,
+	pilotName string,
+	costValue int,
+	titleOfWorkName string,
+	awakenTypeName string,
+) ([]openApiModels.AirframeInfo, error) {
+	airframeInfos, err := airframeService.AirframeRepository.GetAirframes(
+		offset,
+		limit,
+		airframeName,
+		pilotName,
+		costValue,
+		titleOfWorkName,
+		awakenTypeName,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return airframeInfos, nil
 }
